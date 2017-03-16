@@ -156,9 +156,18 @@ class getKillmailsRedis
                 	//if it wasn't any of these continue in case there is another group to process
                     continue;
                 }
+                $isLossMail = $corpLoss || $allianceLoss;
+                $isKillMail = $corpKill || $allianceKill;
+                $kmGroup = array_merge(array('lossMails'=>'true', 'killMails'=>'true'), $kmGroup); // defaults for new options
+                $showLossMails = $kmGroup['lossMails'] !== 'false';
+                $showKillMails = $kmGroup['killMails'] !== 'false';
 
-                //Check if it's a lossmail and continue to next group if lossmails are turned off
-                if (($corpLoss === true || $allianceLoss === true) && $kmGroup['lossMails'] === 'false') {
+                //Check if it's a type of mail we want to show
+                if ($isLossmail && $isKillmail && ($showLossmails || $showKillmails)) {
+                    // if it's both then we're going to show it
+                } elseif ($isLossMail && $kmGroup['lossMails'] === 'false') {
+                    continue;
+                } elseif ($isKillMail && $kmGroup['killMails'] === 'false') {
                     continue;
                 }
 
